@@ -8,27 +8,19 @@
 
 ## 📌 Overview
 
-A backend service that intelligently schedules vehicle maintenance tasks across depots using constraint-based optimization. The system accepts vehicle and depot data, applies an optimized scheduling algorithm, and returns a prioritized maintenance plan — all through a clean REST API.
+A backend service that intelligently schedules vehicle maintenance tasks across depots using a **0/1 Knapsack optimization approach**. The system fetches vehicle and depot data from external APIs, applies an optimized scheduling algorithm, and returns a prioritized maintenance plan — all through a clean REST API.
 
 ---
 
 ## 🗂️ Project Structure
 
 ```
-vehicle-maintenance-scheduler/
-├── index.js              # Entry point
-├── routes/
-│   ├── health.js         # Health check route
-│   ├── depots.js         # Depot listing route
-│   ├── vehicles.js       # Vehicle listing route
-│   └── schedule.js       # Scheduling logic routes
-├── middleware/
-│   └── logger.js         # Request logging middleware
-├── utils/
-│   └── knapsack.js       # 0/1 Knapsack optimization logic
-├── screenshots/          # API response screenshots
-├── package.json
-└── README.md
+logging_middleware/
+vehicle_maintenance_scheduler/
+notification_app_be/
+notification_system_design.md
+screenshots/
+.gitignore
 ```
 
 ---
@@ -47,19 +39,38 @@ npm install
 node index.js
 ```
 
-> The server runs on **http://localhost:3000** by default.
+> The server runs on **http://localhost:3001** by default.
 
 ---
 
 ## 📡 API Endpoints
+
+### 🔧 Scheduler Service — Port `3001`
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | `GET` | `/health` | Returns server health status |
 | `GET` | `/depots` | Lists all available depots |
 | `GET` | `/vehicles` | Lists all vehicles and their details |
-| `POST` | `/schedule` | Generates optimized maintenance schedule |
+| `GET` | `/schedule` | Generates optimized maintenance schedule |
 | `GET` | `/schedule/:depotId` | Fetches schedule for a specific depot |
+
+### 🔔 Notification Service — Port `3002`
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/notifications` | Retrieves all notifications |
+| `POST` | `/notifications/broadcast` | Broadcasts a notification to specified students |
+| `GET` | `/notifications/dlq` | Fetches failed messages from the dead letter queue |
+| `POST` | `/notifications/dlq/retry` | Retries failed messages from the dead letter queue |
+
+**Request Body** — `POST /notifications/broadcast`:
+```json
+{
+  "student_ids": [1, 2, 3],
+  "message": "test notification"
+}
+```
 
 ---
 
@@ -76,13 +87,7 @@ The scheduling engine is built around the **0/1 Knapsack algorithm**:
 
 ## 📋 Logging
 
-All incoming HTTP requests are captured by a lightweight middleware layer that logs:
-
-- Request method and route path
-- Timestamp of each request
-- Response status codes
-
-Logs are printed to the console in a structured, readable format for easy debugging and monitoring.
+A centralized logging middleware is used across all APIs. Logs are integrated with an external logging service and capture request flow and system events.
 
 ---
 
