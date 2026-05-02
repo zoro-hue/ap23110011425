@@ -117,7 +117,7 @@ A centralized logging middleware is used across all APIs. Logs are integrated wi
 ![Schedule](screenshots/schedule.png)
 
 ### Schedule by Depot ID
-![Schedule by Depot](screenshots/schedule_depot.png)
+![Schedule by Depot](screenshots/schedule1.png)
 
 ---
 
